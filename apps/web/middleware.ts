@@ -14,7 +14,6 @@ async function getPayload(token: string) {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const refreshToken = request.cookies.get('refreshToken')?.value;
   const accessToken = request.cookies.get('accessToken')?.value;
 
   // Rotas públicas
@@ -23,13 +22,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Sem refresh token → redirecionar login
-  if (!refreshToken) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
-  // Sem access token válido → redirecionar login (evita acesso a rotas protegidas
-  // apenas com refreshToken presente, que pode estar expirado ou revogado)
+  // Sem access token (JWT-signed) → redirecionar login.
+  // Não exigimos refreshToken cookie aqui porque, em produção, o web (Vercel)
+  // e a API (Railway) estão em domínios diferentes — o refreshToken httpOnly
+  // setado pela API não chega ao Vercel. O cliente armazena o refreshToken
+  // separadamente e usa o pattern X-Client: mobile para renovar.
   if (!accessToken) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
