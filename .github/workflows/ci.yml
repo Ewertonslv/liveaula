@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feat/liveaula-mvp]
+  pull_request:
+    branches: [main]
+
+env:
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/liveaula_test
+  JWT_SECRET: test-jwt-secret-minimum-32-chars-here
+  JWT_REFRESH_SECRET: test-refresh-secret-minimum-32-chars-here
+  NODE_ENV: test
+
+jobs:
+  api-tests:
+    name: API Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: liveaula_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @liveaula/api exec prisma migrate deploy
+      - run: pnpm --filter @liveaula/api test --forceExit --runInBand
+
+  web-build:
+    name: Web Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @liveaula/web build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.liveaula.com
+          JWT_SECRET: ci-placeholder-secret-for-build
+
+  mobile-typecheck:
+    name: Mobile TypeCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @liveaula/mobile exec tsc --noEmit

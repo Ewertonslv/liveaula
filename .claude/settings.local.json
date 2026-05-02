@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(corepack --version)",
+      "Bash(npx --version)",
+      "Bash(corepack enable *)",
+      "Bash(corepack prepare *)",
+      "Bash(pnpm --version)",
+      "Bash(corepack pnpm *)",
+      "Bash(git init *)",
+      "Bash(git --version)",
+      "Bash(git config *)"
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "liveaula",
+    "slug": "liveaula",
+    "version": "1.0.0",
+    "scheme": "liveaula",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1A6B74"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.liveaula.app",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Para enviar foto do perfil",
+        "NSCameraUsageDescription": "Para tirar foto do perfil"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1A6B74"
+      },
+      "package": "com.liveaula.app",
+      "permissions": ["android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#1A6B74"
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID"
+      }
+    }
+  }
+}
