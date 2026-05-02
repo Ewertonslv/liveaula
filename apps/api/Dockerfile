@@ -11,7 +11,11 @@ FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared/package.json ./packages/shared/
 COPY apps/api/package.json ./apps/api/
-RUN pnpm install --no-frozen-lockfile --filter @liveaula/api...
+COPY apps/web/package.json ./apps/web/
+COPY apps/mobile/package.json ./apps/mobile/
+# Install everything (filtering caused transitive deps of shared to be missing — zod, etc.)
+# Use --ignore-scripts to skip postinstall (Prisma generate runs explicitly later)
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # ─── Stage 2: build TypeScript (shared first, then api) ────────────────────
 FROM base AS build
