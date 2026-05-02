@@ -1,0 +1,134 @@
+squad:
+  code: acompanha-dev
+  setor: desenvolvimento
+  grupo: produto
+  sessao: acompanha
+  name: liveaula — Squad de Desenvolvimento
+  description: Squad completo de desenvolvimento do produto liveaula. A cada execução recebe uma feature ou sprint como input e produz arquitetura, design, código (web + mobile + backend), segurança, infra e QA — finalizado com revisão crítica do advogado do diabo.
+  icon: laptop-code
+  version: "1.0.0"
+
+  company: "_expxagents/_memory/company.md"
+  preferences: "_expxagents/_memory/preferences.md"
+  memory: "_memory/memories.md"
+
+  target_audience: Equipe de desenvolvimento do produto liveaula
+  platform: web (Next.js) + mobile iOS/Android (React Native) + backend (Node.js)
+  format: technical-spec
+
+  schedule:
+    enabled: false
+
+  skills: []
+
+  data: []
+
+  agents:
+    - id: gabriela-mendes
+      name: Gabriela Mendes
+      icon: brain
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Gabriela"
+      prompt: agents/gabriela-mendes.md
+
+    - id: thiago-costa
+      name: Thiago Costa
+      icon: palette
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Thiago"
+      prompt: agents/thiago-costa.md
+
+    - id: isabella-rodrigues
+      name: Isabella Rodrigues
+      icon: server
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Isabella"
+      prompt: agents/isabella-rodrigues.md
+
+    - id: lucas-ferreira
+      name: Lucas Ferreira
+      icon: monitor
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Lucas"
+      prompt: agents/lucas-ferreira.md
+
+    - id: marina-santos
+      name: Marina Santos
+      icon: device-mobile
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Marina"
+      prompt: agents/marina-santos.md
+
+    - id: fernando-alves
+      name: Fernando Alves
+      icon: shield-check
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Fernando"
+      prompt: agents/fernando-alves.md
+
+    - id: paulo-lima
+      name: Paulo Lima
+      icon: cloud
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Paulo"
+      prompt: agents/paulo-lima.md
+
+    - id: carolina-freitas
+      name: Carolina Freitas
+      icon: clipboard-check
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Carolina"
+      prompt: agents/carolina-freitas.md
+
+    - id: diego-moreira
+      name: Diego Moreira
+      icon: fire
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Diego"
+      prompt: agents/diego-moreira.md
+
+  pipeline:
+    steps:
+      - id: step-01
+        agent: gabriela-mendes
+        label: Arquitetura técnica e decisões de stack
+        execution: inline
+
+      - id: step-02
+        agent: thiago-costa
+        label: Design system, identidade visual e fluxos UX
+        deliverFrom: gabriela-mendes
+        execution: inline
+
+      - id: step-03
+        agent: isabella-rodrigues
+        label: Backend — schema, API REST e contratos
+        deliverFrom: thiago-costa
+        execution: inline
+
+      - id: step-04
+        agent: lucas-ferreira
+        label: Frontend Web — Next.js (painel do professor)
+        deliverFrom: isabella-rodrigues
+        execution: inline
+
+      - id: step-05
+        agent: marina-santos
+        label: Mobile — React Native iOS + Android (app do pai/mãe)
+        deliverFrom: lucas-ferreira
+        execution: inline
+
+      - id: step-06
+        agent: fernando-alves
+        label: Segurança, autenticação e conformidade LGPD
+        deliverFrom: marina-santos
+        execution: inline
+
+      - id: step-07
+        agent: paulo-lima
+        label: Infraestrutura, cloud e CI/CD
+        deliverFrom: fernando-alves
+        execution: inline
+
+      - id: step-08
+        agent: carolina-freitas
+        label: QA — estratégia de testes e critérios de aceite
+        deliverFrom: paulo-lima
+        execution: inline
+
+      - id: step-09
+        agent: diego-moreira
+        label: Advogado do Diabo — revisão crítica de tudo
+        deliverFrom: carolina-freitas
+        execution: inline

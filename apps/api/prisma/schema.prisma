@@ -1,0 +1,280 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PROFESSOR
+  PARENT
+  ADMIN
+}
+
+enum InvitationStatus {
+  PENDING
+  CLAIMED
+  EXPIRED
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  SUSPENDED
+}
+
+enum LessonEmotion {
+  GREAT
+  GOOD
+  NEUTRAL
+  DIFFICULT
+  CHALLENGING
+}
+
+enum ConsentType {
+  LGPD_PARENTAL_ART14
+  TERMS_OF_USE
+  PRIVACY_POLICY
+}
+
+enum ProfessorPlanStatus {
+  FREE
+  PAID
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  email              String              @unique
+  passwordHash       String
+  refreshToken       String?
+  role               Role
+  name               String
+  bio                String?
+  avatarUrl          String?
+  isActive           Boolean             @default(true)
+  planStatus         ProfessorPlanStatus @default(PAID)
+  externalCustomerId String?
+  emailVerifiedAt    DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  students                Student[]                @relation("ProfessorStudents")
+  parentLinks             StudentParent[]          @relation("ParentLinks")
+  invitationsSent         Invitation[]             @relation("ProfessorInvitations")
+  deviceTokens            DeviceToken[]
+  consentLogs             ConsentLog[]
+  subscriptions           Subscription[]
+  lessonsGiven            Lesson[]
+  passwordResetTokens     PasswordResetToken[]
+  emailVerificationTokens EmailVerificationToken[]
+  notificationsReceived   PushNotificationLog[]    @relation("NotificationRecipient")
+
+  @@index([role, isActive])
+}
+
+model Subject {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+
+  students Student[]
+  lessons  Lesson[]
+}
+
+model Student {
+  id         String   @id @default(cuid())
+  name       String
+  gradeLevel String
+  avatarUrl  String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  professorId String
+  professor   User    @relation("ProfessorStudents", fields: [professorId], references: [id])
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  parentLinks StudentParent[]
+  lessons     Lesson[]
+  invitations Invitation[]
+
+  @@index([professorId, isActive])
+  @@index([professorId, createdAt(sort: Desc)])
+}
+
+model StudentParent {
+  id        String   @id @default(cuid())
+  consentAt DateTime @default(now())
+  consentIp String
+  createdAt DateTime @default(now())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  parentId String
+  parent   User   @relation("ParentLinks", fields: [parentId], references: [id])
+
+  @@unique([studentId, parentId])
+  @@index([parentId])
+  @@index([studentId])
+}
+
+model Lesson {
+  id                   String        @id @default(cuid())
+  durationMin          Int
+  whatWasDone          String        @db.VarChar(280)
+  observation          String?       @db.VarChar(500)
+  emotion              LessonEmotion @default(NEUTRAL)
+  notifiedAt           DateTime?
+  confirmedByParentAt  DateTime?
+  confirmedByParentId  String?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  professorId String
+  professor   User   @relation(fields: [professorId], references: [id])
+
+  pushNotifications PushNotificationLog[]
+
+  @@index([studentId, createdAt(sort: Desc)])
+  @@index([professorId, createdAt(sort: Desc)])
+}
+
+model Invitation {
+  id          String           @id @default(cuid())
+  token       String           @unique @default(cuid())
+  parentEmail String
+  status      InvitationStatus @default(PENDING)
+  expiresAt   DateTime
+  claimedAt   DateTime?
+  claimedById String?
+  createdAt   DateTime         @default(now())
+
+  professorId String
+  professor   User    @relation("ProfessorInvitations", fields: [professorId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@index([token])
+  @@index([professorId, status])
+  @@unique([studentId, parentEmail, status])
+}
+
+model Subscription {
+  id                     String             @id @default(cuid())
+  status                 SubscriptionStatus @default(TRIAL)
+  trialEndsAt            DateTime?
+  currentPeriodEnd       DateTime?
+  cancelledAt            DateTime?
+  externalSubscriptionId String?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  parentId  String
+  parent    User   @relation(fields: [parentId], references: [id])
+
+  studentId String
+
+  payments Payment[]
+
+  @@index([parentId, status])
+}
+
+model Payment {
+  id                String    @id @default(cuid())
+  amountCents       Int
+  status            String
+  paidAt            DateTime?
+  failureReason     String?
+  externalPaymentId String?
+  rawWebhookPayload Json?
+  createdAt         DateTime  @default(now())
+
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@index([subscriptionId, createdAt(sort: Desc)])
+}
+
+model DeviceToken {
+  id           String   @id @default(cuid())
+  token        String   @unique
+  platform     String
+  isValid      Boolean  @default(true)
+  lastVerified DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId, isValid])
+}
+
+model ConsentLog {
+  id          String      @id @default(cuid())
+  consentType ConsentType
+  version     String      @default("1.0")
+  ip          String
+  revokedAt   DateTime?
+  createdAt   DateTime    @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId, consentType])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  usedAt    DateTime?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  usedAt    DateTime?
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model PushNotificationLog {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  recipientId String
+  recipient   User   @relation("NotificationRecipient", fields: [recipientId], references: [id])
+
+  lessonId String?
+  lesson   Lesson? @relation(fields: [lessonId], references: [id])
+
+  @@index([recipientId, createdAt(sort: Desc)])
+}

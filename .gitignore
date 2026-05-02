@@ -1,0 +1,33 @@
+node_modules/
+.env
+.env.local
+.mcp.json
+*.tmp
+squads/*/state.json
+squads/*/state.json.tmp
+squads/*/output/
+dist/
+.next/
+.expo/
+android/
+ios/
+*.log
+.DS_Store
+coverage/
+
+# Reference material (third-party design systems clone)
+docs/awesome-design-md/
+
+# Build artifacts
+apps/web/tsconfig.tsbuildinfo
+apps/api/dist/
+apps/api/package-lock.json
+packages/shared/package-lock.json
+
+# Local-only smoke / fixture scripts
+apps/api/smoke-*.mjs
+apps/api/seed-demo-*.mjs
+
+# IDE
+.vscode/
+.idea/

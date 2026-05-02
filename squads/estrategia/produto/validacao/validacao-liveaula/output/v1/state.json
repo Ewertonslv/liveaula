@@ -1,0 +1,54 @@
+{
+  "squad": "validacao-liveaula",
+  "status": "running",
+  "step": { "current": 1, "total": 4, "label": "Pesquisa de mercado e análise competitiva" },
+  "agents": [
+    {
+      "id": "marcos-vieira",
+      "name": "Marcos Vieira",
+      "icon": "chart-bar",
+      "status": "working",
+      "stepIndex": 1,
+      "stepLabel": "Pesquisa de mercado e análise competitiva",
+      "desk": { "col": 1, "row": 1 },
+      "deliverTo": "priscila-santos",
+      "message": ""
+    },
+    {
+      "id": "priscila-santos",
+      "name": "Priscila Santos",
+      "icon": "lightbulb",
+      "status": "idle",
+      "stepIndex": 0,
+      "stepLabel": "",
+      "desk": { "col": 2, "row": 1 },
+      "deliverTo": "roberto-alves",
+      "message": ""
+    },
+    {
+      "id": "roberto-alves",
+      "name": "Roberto Alves",
+      "icon": "currency-dollar",
+      "status": "idle",
+      "stepIndex": 0,
+      "stepLabel": "",
+      "desk": { "col": 3, "row": 1 },
+      "deliverTo": "andre-lima",
+      "message": ""
+    },
+    {
+      "id": "andre-lima",
+      "name": "André Lima",
+      "icon": "fire",
+      "status": "idle",
+      "stepIndex": 0,
+      "stepLabel": "",
+      "desk": { "col": 4, "row": 1 },
+      "deliverTo": null,
+      "message": ""
+    }
+  ],
+  "handoff": null,
+  "startedAt": "2026-04-29T00:00:00Z",
+  "updatedAt": "2026-04-29T00:00:00Z"
+}

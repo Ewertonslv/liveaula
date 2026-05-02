@@ -1,0 +1,81 @@
+squad:
+  code: validacao-liveaula
+  setor: estrategia
+  grupo: produto
+  sessao: validacao
+  name: "Validação de Ideia — liveaula (ACOMPANHA)"
+  description: >
+    Squad de validação do produto ACOMPANHA. Analisa mercado, fit produto-mercado
+    e modelo de monetização para produzir hipóteses priorizadas e experimentos de
+    validação baratos, rápidos e mensuráveis.
+  icon: magnifying-glass
+  version: "1.0.0"
+
+  company: "_expxagents/_memory/company.md"
+  preferences: "_expxagents/_memory/preferences.md"
+  memory: "squads/estrategia/produto/validacao/validacao-liveaula/_memory/memories.md"
+
+  target_audience: >
+    Pais e mães com filhos em aulas particulares no Brasil (mercado primário).
+    Professores particulares como canal de aquisição e segunda fonte de receita.
+  platform: internal
+  format: strategy-validation
+
+  schedule:
+    enabled: false
+
+  skills:
+    - web_search
+    - web_fetch
+
+  data: []
+
+  agents:
+    - id: marcos-vieira
+      name: "Marcos Vieira"
+      icon: chart-bar
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Marcos"
+      prompt: squads/estrategia/produto/validacao/validacao-liveaula/agents/marcos-vieira.md
+
+    - id: priscila-santos
+      name: "Priscila Santos"
+      icon: lightbulb
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Priscila"
+      prompt: squads/estrategia/produto/validacao/validacao-liveaula/agents/priscila-santos.md
+
+    - id: roberto-alves
+      name: "Roberto Alves"
+      icon: currency-dollar
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roberto"
+      prompt: squads/estrategia/produto/validacao/validacao-liveaula/agents/roberto-alves.md
+
+    - id: andre-lima
+      name: "André Lima"
+      icon: fire
+      avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Andre"
+      prompt: squads/estrategia/produto/validacao/validacao-liveaula/agents/andre-lima.md
+
+  pipeline:
+    steps:
+      - id: step-01
+        agent: marcos-vieira
+        label: "Pesquisa de mercado e análise competitiva"
+        execution: inline
+
+      - id: step-02
+        agent: priscila-santos
+        label: "Análise de fit produto-mercado e hipóteses de risco"
+        deliverFrom: marcos-vieira
+        execution: inline
+
+      - id: step-03
+        agent: roberto-alves
+        label: "Validação do modelo de negócio e experimentos prioritários"
+        deliverFrom: priscila-santos
+        execution: inline
+
+      - id: step-04
+        agent: andre-lima
+        label: "Advogado do diabo — destruindo as premissas dos três anteriores"
+        deliverFrom: roberto-alves
+        execution: inline

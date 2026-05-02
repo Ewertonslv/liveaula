@@ -1,0 +1,95 @@
+# .claudeignore — economia de tokens
+# Arquivos que o Claude não precisa ler para trabalhar nas 3 skills do liveaula
+# (liveaula-pesquisa-mercado, liveaula-design, liveaula-dev) ou no framework ExpxAgents.
+
+# ────────────────────────────────────────────────────────
+# Padrões padrão de qualquer projeto
+# ────────────────────────────────────────────────────────
+node_modules/
+.git/
+dist/
+build/
+.next/
+.expo/
+.turbo/
+coverage/
+test-results/
+playwright-report/
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Lock files (raramente precisam ser lidos)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# ────────────────────────────────────────────────────────
+# ExpxAgents — manter estrutura, mas ignorar templates
+# ────────────────────────────────────────────────────────
+
+# Catálogo de 90+ templates de agente: só relevante quando o usuário
+# roda /expxagents create. Em qualquer outra interação, o Claude não
+# precisa ler estes arquivos.
+agents/**/*.agent.md
+
+# Best-practices do ExpxAgents (28 templates de formato: blog-post,
+# email-sales, instagram-feed, etc.). Só relevantes quando uma skill
+# referencia explicitamente.
+_expxagents/core/best-practices/*.md
+
+# Configs MCP detalhadas (figma, github, linear, notion, etc).
+# Só relevante na configuração inicial via /expxagents.
+mcps/*.mcp.yaml
+
+# Pipelines internos do ExpxAgents (runner, skills engine).
+# As 3 skills do liveaula não dependem deles.
+_expxagents/core/runner.pipeline.md
+_expxagents/core/skills.engine.md
+_expxagents/core/visual-squad-guide.md
+_expxagents/core/onboarding/
+
+# ────────────────────────────────────────────────────────
+# Squads — manter spec e memória, ignorar configs runtime
+# ────────────────────────────────────────────────────────
+
+# Agentes antigos dos squads — absorvidos pelas skills (12 papéis em
+# liveaula-dev, 4 papéis em liveaula-pesquisa-mercado). Ler estes
+# arquivos é redundante.
+squads/**/agents/*.md
+
+# Configs do runtime ExpxAgents para os squads (yaml de definição,
+# csv de party). As skills não precisam.
+squads/**/squad.yaml
+squads/**/squad-party.csv
+
+# ────────────────────────────────────────────────────────
+# Outputs históricos — manter em disco, mas não ler por padrão
+# ────────────────────────────────────────────────────────
+
+# Outputs de rodadas anteriores das skills. Históricos com valor de
+# referência (ex: pesquisa de mercado já validada), mas o Claude não
+# precisa ler em todo turno — só quando explicitamente pedido.
+squads/**/output/**/*.md
+squads/**/output/**/*.json
+output/dev/**/*
+output/design/**/*
+
+# ────────────────────────────────────────────────────────
+# Mantidos explicitamente (referência rápida do que NÃO está ignorado)
+# ────────────────────────────────────────────────────────
+# .claude/skills/liveaula-{design,dev,pesquisa-mercado}/SKILL.md
+# .claude/skills/expxagents/SKILL.md
+# _expxagents/_memory/company.md
+# _expxagents/_memory/preferences.md
+# squads/**/product-spec.md
+# squads/**/_memory/memories.md
+# squads/**/DESIGN.md
+# docs/superpowers/specs/*.md
+# docs/superpowers/plans/*.md
+# COMANDOS.md
+# .gitignore
+# .env (cuidado: pode conter secrets — verifique antes de commitar)
