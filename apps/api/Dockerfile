@@ -6,25 +6,31 @@ RUN apk add --no-cache libc6-compat openssl openssl-dev
 RUN npm install -g pnpm@10.33.2
 WORKDIR /app
 
-# ─── Stage 1: install all workspace deps for the API ───────────────────────
+# ─── Stage 1: install all workspace deps ───────────────────────────────────
 FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared/package.json ./packages/shared/
 COPY apps/api/package.json ./apps/api/
 COPY apps/web/package.json ./apps/web/
 COPY apps/mobile/package.json ./apps/mobile/
-# Install everything (filtering caused transitive deps of shared to be missing — zod, etc.)
-# Use --ignore-scripts to skip postinstall (Prisma generate runs explicitly later)
+# Install everything (filtering caused transitive deps of shared to be missing).
+# --ignore-scripts skips postinstall (Prisma generate runs explicitly later).
 RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
-# ─── Stage 2: build TypeScript (shared first, then api) ────────────────────
+# ─── Stage 2: build (copy source first, THEN node_modules) ─────────────────
+# IMPORTANT: order matters. We copy source first because COPY of a directory
+# OVERWRITES the destination — if we did it inverse, source COPY would wipe out
+# the node_modules brought from the deps stage.
 FROM base AS build
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
+# 1. Source code
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared ./packages/shared
 COPY apps/api ./apps/api
+# 2. node_modules from deps stage (after source so it's not wiped)
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 
 # Build shared package to dist/ AND patch its package.json so production resolves
 # to compiled JS instead of the .ts source (which Node can't run).
