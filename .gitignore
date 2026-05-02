@@ -22,6 +22,7 @@ docs/awesome-design-md/
 apps/web/tsconfig.tsbuildinfo
 apps/api/dist/
 apps/api/package-lock.json
+packages/shared/dist/
 packages/shared/package-lock.json
 
 # Local-only smoke / fixture scripts
