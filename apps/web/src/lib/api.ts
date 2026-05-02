@@ -1,21 +1,31 @@
 'use client';
 
 let accessTokenMemory: string | null = null;
+let refreshTokenMemory: string | null = null;
+
+const ACCESS_COOKIE = 'accessToken';
+const REFRESH_KEY = 'liveaula.refreshToken';
+const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+const cookieFlags = `path=/; SameSite=Lax${isHttps ? '; Secure' : ''}`;
 
 export function setAccessToken(token: string) {
   accessTokenMemory = token;
-  // Mirror to a JS-readable cookie so refresh of the page restores memory.
-  // 15 min = JWT TTL.
   if (typeof document !== 'undefined') {
-    document.cookie = `accessToken=${token}; path=/; max-age=900; SameSite=lax`;
+    document.cookie = `${ACCESS_COOKIE}=${token}; max-age=900; ${cookieFlags}`;
+  }
+}
+
+export function setRefreshToken(token: string) {
+  refreshTokenMemory = token;
+  if (typeof window !== 'undefined') {
+    try { localStorage.setItem(REFRESH_KEY, token); } catch { /* ignore */ }
   }
 }
 
 export function getAccessToken(): string | null {
   if (accessTokenMemory) return accessTokenMemory;
-  // Hydrate from cookie when memory is empty (e.g. after page refresh).
   if (typeof document !== 'undefined') {
-    const match = document.cookie.match(/(?:^|;\s*)accessToken=([^;]+)/);
+    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${ACCESS_COOKIE}=([^;]+)`));
     if (match) {
       accessTokenMemory = decodeURIComponent(match[1]);
       return accessTokenMemory;
@@ -24,24 +34,52 @@ export function getAccessToken(): string | null {
   return null;
 }
 
-function clearAccessToken() {
+function getRefreshToken(): string | null {
+  if (refreshTokenMemory) return refreshTokenMemory;
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem(REFRESH_KEY);
+      if (stored) {
+        refreshTokenMemory = stored;
+        return stored;
+      }
+    } catch { /* ignore */ }
+  }
+  return null;
+}
+
+export function clearTokens() {
   accessTokenMemory = null;
+  refreshTokenMemory = null;
   if (typeof document !== 'undefined') {
-    document.cookie = 'accessToken=; path=/; max-age=0; SameSite=lax';
+    document.cookie = `${ACCESS_COOKIE}=; max-age=0; ${cookieFlags}`;
+  }
+  if (typeof window !== 'undefined') {
+    try { localStorage.removeItem(REFRESH_KEY); } catch { /* ignore */ }
   }
 }
 
 async function refreshAccessToken(baseUrl: string): Promise<string | null> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return null;
+
+  // Use the X-Client: mobile pattern so the API reads refreshToken from body
+  // (cross-site cookies don't work between Vercel and Railway domains)
   const res = await fetch(`${baseUrl}/auth/refresh`, {
     method: 'POST',
-    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Client': 'mobile',
+    },
+    body: JSON.stringify({ refreshToken }),
   });
   if (!res.ok) return null;
   try {
-    const { accessToken } = await res.json();
-    if (typeof accessToken === 'string') {
-      setAccessToken(accessToken);
-      return accessToken;
+    const data = await res.json();
+    if (typeof data.accessToken === 'string') {
+      setAccessToken(data.accessToken);
+      if (typeof data.refreshToken === 'string') setRefreshToken(data.refreshToken);
+      return data.accessToken;
     }
   } catch {
     /* fall through */
@@ -54,27 +92,25 @@ export async function apiFetch<T = unknown>(
   init: RequestInit = {},
 ): Promise<T> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
-  let token = getAccessToken();
+  const token = getAccessToken();
 
   const headers: Record<string, string> = {
     ...(init.headers as Record<string, string>),
   };
-  // Only set Content-Type when there is a body — Fastify rejects empty JSON requests
   if (init.body !== undefined && init.body !== null && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json';
   }
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  let res = await fetch(`${baseUrl}${url}`, { ...init, headers, credentials: 'include' });
+  let res = await fetch(`${baseUrl}${url}`, { ...init, headers });
 
-  // 401 → try to refresh ONCE using refresh-token cookie, regardless of in-memory state
   if (res.status === 401) {
     const refreshed = await refreshAccessToken(baseUrl);
     if (refreshed) {
       headers['Authorization'] = `Bearer ${refreshed}`;
-      res = await fetch(`${baseUrl}${url}`, { ...init, headers, credentials: 'include' });
+      res = await fetch(`${baseUrl}${url}`, { ...init, headers });
     } else {
-      clearAccessToken();
+      clearTokens();
       throw Object.assign(new Error('SESSION_EXPIRED'), { status: 401 });
     }
   }

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { setAccessToken } from '@/lib/api';
+import { setAccessToken, setRefreshToken, clearTokens, getAccessToken } from '@/lib/api';
 
 interface User {
   id: string;
@@ -30,8 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
     const res = await fetch(`${apiUrl}/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Client': 'mobile', // Treat web as cross-site too — refreshToken in body
+      },
       body: JSON.stringify({ email, password }),
     });
     if (!res.ok) {
@@ -42,17 +44,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data.user);
     setToken(data.accessToken);
     setAccessToken(data.accessToken);
-    document.cookie = `accessToken=${data.accessToken}; path=/; max-age=900; SameSite=lax`;
+    if (data.refreshToken) setRefreshToken(data.refreshToken);
     return data.user;
   }, []);
 
   const logout = useCallback(async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
-    await fetch(`${apiUrl}/auth/logout`, { method: 'POST', credentials: 'include' });
+    const token = getAccessToken();
+    try {
+      await fetch(`${apiUrl}/auth/logout`, {
+        method: 'POST',
+        headers: token
+          ? { 'X-Client': 'mobile', Authorization: `Bearer ${token}` }
+          : { 'X-Client': 'mobile' },
+      });
+    } catch { /* ignore network errors on logout */ }
     setUser(null);
     setToken(null);
-    setAccessToken('');
-    document.cookie = 'accessToken=; path=/; max-age=0; SameSite=lax';
+    clearTokens();
   }, []);
 
   return (
