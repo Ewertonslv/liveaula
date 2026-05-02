@@ -57,4 +57,5 @@ COPY --from=build /app/apps/api/node_modules ./apps/api/node_modules
 
 WORKDIR /app/apps/api
 EXPOSE 3000
-CMD ["sh", "-c", "pnpm exec prisma migrate deploy && node dist/server.js"]
+# Cache-bust marker: 2026-05-02-v3
+CMD ["sh", "-c", "echo '=== CONTAINER START v3 ===' && pwd && ls dist/ && pnpm exec prisma migrate deploy && echo '=== MIGRATE OK, STARTING NODE ===' && node dist/server.js"]
