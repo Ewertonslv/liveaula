@@ -40,6 +40,7 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @liveaula/api exec prisma generate
       - run: pnpm --filter @liveaula/api exec prisma migrate deploy
       - run: pnpm --filter @liveaula/api test -- --runInBand
 
