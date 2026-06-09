@@ -41,7 +41,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @liveaula/api exec prisma migrate deploy
-      - run: pnpm --filter @liveaula/api test --forceExit --runInBand
+      - run: pnpm --filter @liveaula/api test -- --runInBand
 
   web-build:
     name: Web Build
