@@ -72,9 +72,10 @@ the mobile app. There are no mobile e2e tests.
 
 ## Deployment
 
-There is no automated deploy right now. The API has a Dockerfile (`apps/api/Dockerfile`), the web app is
-a standard Next.js build and the mobile app builds with Expo EAS. Each app builds independently from the
-monorepo.
+The web app is deployed by Vercel's Git integration on pushes to `main` (https://liveaula-web.vercel.app).
+The API is not deployed anywhere right now, so the hosted web app has no backend behind it. The API has a
+Dockerfile (`apps/api/Dockerfile`) and the mobile app builds with Expo EAS. Each app builds independently
+from the monorepo.
 
 ---
 
