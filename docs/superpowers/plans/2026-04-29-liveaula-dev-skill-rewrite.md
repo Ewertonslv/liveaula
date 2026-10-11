@@ -41,13 +41,13 @@ Esperado: arquivo existe com 3 papéis e paths corretos. Se `acompanha` ainda ap
 
 - [ ] **Step 2: Confirmar diretório do squad existe**
 
-Run: `ls "c:/Users/Ewerton/Documents/Projetos github/liveaula/squads/desenvolvimento/produto/liveaula/liveaula-dev/"`
+Run: `ls "squads/desenvolvimento/produto/liveaula/liveaula-dev/"`
 
 Esperado: lista mostra `agents/`, `_memory/`, `product-spec.md`, `squad.yaml`, `squad-party.csv`.
 
 - [ ] **Step 3: Confirmar spec referência existe**
 
-Run: `ls "c:/Users/Ewerton/Documents/Projetos github/liveaula/docs/superpowers/specs/2026-04-29-liveaula-dev-skill-design.md"`
+Run: `ls "docs/superpowers/specs/2026-04-29-liveaula-dev-skill-design.md"`
 
 Esperado: arquivo existe.
 
@@ -1126,7 +1126,7 @@ Read tool sem `limit` — confirmar que SKILL.md está coerente do início ao fi
 - [ ] **Step 1: Grep para garantir que não sobrou referência ao pipeline antigo**
 
 ```bash
-grep -nE "Maker|Critic|Chef|3 papéis|3 papeis" "c:/Users/Ewerton/Documents/Projetos github/liveaula/.claude/skills/liveaula-dev/SKILL.md"
+grep -nE "Maker|Critic|Chef|3 papéis|3 papeis" ".claude/skills/liveaula-dev/SKILL.md"
 ```
 
 Esperado: única ocorrência de "Maker/Critic/Chef" deve estar na seção "## Substituição" (contexto histórico). Nenhuma outra menção.
@@ -1136,7 +1136,7 @@ Se aparecer em outros lugares: remover/ajustar.
 - [ ] **Step 2: Grep para garantir paths corretos**
 
 ```bash
-grep -nE "acompanha|validacao-liveaula|liveaula-validation" "c:/Users/Ewerton/Documents/Projetos github/liveaula/.claude/skills/liveaula-dev/SKILL.md"
+grep -nE "acompanha|validacao-liveaula|liveaula-validation" ".claude/skills/liveaula-dev/SKILL.md"
 ```
 
 Esperado: zero resultados.
@@ -1147,7 +1147,7 @@ Se aparecer: corrigir para `liveaula/liveaula-dev` e `liveaula-pesquisa-mercado`
 
 Grep das 12 personas para confirmar que aparecem na quantidade certa:
 ```bash
-grep -cE "Alice|Bruno|Carla|Diego|Ewerton|Fernanda|Gabriel|Helena|Igor|Lucas|Karla|Julia" "c:/Users/Ewerton/Documents/Projetos github/liveaula/.claude/skills/liveaula-dev/SKILL.md"
+grep -cE "Alice|Bruno|Carla|Diego|Ewerton|Fernanda|Gabriel|Helena|Igor|Lucas|Karla|Julia" ".claude/skills/liveaula-dev/SKILL.md"
 ```
 
 Esperado: ≥ 24 ocorrências (cada persona aparece pelo menos 2x — diagrama + seção dedicada).

@@ -5,7 +5,7 @@ description: "Squad de design enxuto para liveaula (5 papéis). Lê product-spec
 
 # liveaula-design — Squad de Design Enxuto
 
-Adaptação do `viggo-design` para o projeto liveaula. Mesma filosofia de token-efficiency e taste-design, sem dependência de Stitch MCP nem stack Viggo.
+Squad de design do liveaula. Filosofia de token-efficiency e taste-design, sem dependência de Stitch MCP.
 
 **Definição de pronto:** pacote final entregue ao `liveaula-dev` contém DESIGN.md aprovado + wireframes textuais de todas as telas + specs de componentes por stack (Web Next.js + Mobile React Native).
 

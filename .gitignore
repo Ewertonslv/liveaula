@@ -32,3 +32,8 @@ apps/api/seed-demo-*.mjs
 # IDE
 .vscode/
 .idea/
+
+# Local AI tooling
+.claude/
+CLAUDE.md
+graphify-out/
