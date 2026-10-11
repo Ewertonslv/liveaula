@@ -207,7 +207,7 @@ export async function authRoutes(app: FastifyInstance) {
         data: { userId: user.id, token: verifyToken, expiresAt },
       });
 
-      const verifyUrl = `${process.env.WEB_URL || 'https://liveaula.com'}/verify-email?token=${verifyToken}`;
+      const verifyUrl = `${process.env.WEB_URL || 'http://localhost:3001'}/verify-email?token=${verifyToken}`;
       emailService.sendEmailVerification({ to: user.email, name: user.name, verifyUrl })
         .catch(err => app.log.error({ err }, 'Failed to resend verification email'));
 

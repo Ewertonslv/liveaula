@@ -5,8 +5,8 @@ function getResend(): Resend {
   if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
   return _resend;
 }
-const FROM = process.env.EMAIL_FROM || 'liveaula <noreply@liveaula.com>';
-const WEB_URL = process.env.WEB_URL || 'https://liveaula.com';
+const FROM = process.env.EMAIL_FROM || 'liveaula <onboarding@resend.dev>';
+const WEB_URL = process.env.WEB_URL || 'http://localhost:3001';
 
 export const emailService = {
   async sendInvitation({

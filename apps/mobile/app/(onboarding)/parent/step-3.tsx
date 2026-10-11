@@ -22,6 +22,9 @@ function ProgressDots({ total, current }: { total: number; current: number }) {
   );
 }
 
+// Same contact as apps/web/src/app/(onboarding)/parent/_components/LgpdConsentStep.tsx
+const DPO_EMAIL = process.env.EXPO_PUBLIC_DPO_EMAIL || 'privacidade@example.com';
+
 const LGPD_TEXT = `TERMO DE CONSENTIMENTO PARENTAL PARA TRATAMENTO DE DADOS PESSOAIS DE CRIANÇAS E ADOLESCENTES
 (Lei Geral de Proteção de Dados Pessoais — LGPD, Lei nº 13.709/2018, Art. 14)
 
@@ -90,7 +93,7 @@ g) Informação sobre as entidades com as quais o Controlador realizou uso compa
 h) Informação sobre a possibilidade de não fornecer consentimento e sobre as consequências da negativa;
 i) Revogação do consentimento a qualquer tempo, mediante manifestação expressa.
 
-Para exercer qualquer um dos direitos acima, ou para revogar o presente consentimento, o responsável legal deverá entrar em contato com o Encarregado de Proteção de Dados (DPO) da Liveaula pelo e-mail: privacidade@liveaula.com.br. A solicitação será atendida no prazo de 15 (quinze) dias úteis.
+Para exercer qualquer um dos direitos acima, ou para revogar o presente consentimento, o responsável legal deverá entrar em contato com o Encarregado de Proteção de Dados (DPO) da Liveaula pelo e-mail: ${DPO_EMAIL}. A solicitação será atendida no prazo de 15 (quinze) dias úteis.
 
 7. SEGURANÇA DOS DADOS
 
@@ -98,7 +101,7 @@ A Liveaula adota medidas técnicas e organizacionais adequadas para proteger os 
 
 8. ENCARREGADO DE PROTEÇÃO DE DADOS (DPO)
 
-Em conformidade com o Art. 41 da LGPD, o Encarregado de Proteção de Dados da Liveaula pode ser contatado pelo e-mail: privacidade@liveaula.com.br.
+Em conformidade com o Art. 41 da LGPD, o Encarregado de Proteção de Dados da Liveaula pode ser contatado pelo e-mail: ${DPO_EMAIL}.
 
 9. CONSENTIMENTO
 

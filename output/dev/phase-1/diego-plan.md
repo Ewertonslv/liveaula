@@ -60,7 +60,7 @@ feat/liveaula-mvp
 
   Migrations em 4 arquivos separados (não mesclar — facilita rollback): `001` cobre User+Subject+DeviceToken+ConsentLog; `002` cobre Student+StudentParent+Lesson; `003` cobre Invitation; `004` cobre Subscription+Payment.
 
-  Seed deve criar: 20 subjects (Matemática, Português, Física, Química, Biologia, História, Geografia, Inglês, Artes, Educação Física, Redação, Literatura, Filosofia, Sociologia, Informática, Música, Espanhol, Francês, Libras, Robótica), 5 professores de teste (professor1@test.com até professor5@test.com, senha: `Test@1234`), 10 alunos (2 por professor), 20 aulas dummy (2 por aluno), 1 admin (`admin@liveaula.com`, senha: `Admin@secure1`).
+  Seed deve criar: 20 subjects (Matemática, Português, Física, Química, Biologia, História, Geografia, Inglês, Artes, Educação Física, Redação, Literatura, Filosofia, Sociologia, Informática, Música, Espanhol, Francês, Libras, Robótica), 5 professores de teste (professor1@test.com até professor5@test.com, senha: `Test@1234`), 10 alunos (2 por professor), 20 aulas dummy (2 por aluno), 1 admin (`admin@example.com`, senha: `Admin@secure1`).
 
   Configurar `package.json` raiz com `pnpm workspaces` apontando para `apps/*` e `packages/*`. Adicionar scripts: `dev`, `build`, `test`, `lint` em cascata via `--filter`. `.env.example` deve listar: `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN`, `FCM_SERVER_KEY`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `NODE_ENV`.
 
@@ -234,7 +234,7 @@ feat/liveaula-mvp
   - `claimInvitation(token, parentId, parentEmail)`: **antes de qualquer mudança** verifica `parentEmail.toLowerCase() === invitation.parentEmail.toLowerCase()` → lança `BadRequestError('Email não corresponde ao convite')` se diferente **[FIX I07: impede sequestro de convite]**. Dentro de transação Prisma: valida token, cria `StudentParent { studentId, parentId }`, atualiza invitation `{ status: CLAIMED, claimedAt: now(), claimedById: parentId }`
 
   **Endpoints**:
-  - `POST /invitations` (PROFESSOR): valida via `createInvitationSchema`, chama `invitation.service.createInvitation`. Retorna `{ id, token, inviteUrl: https://liveaula.com/invite/${token}, expiresAt }`
+  - `POST /invitations` (PROFESSOR): valida via `createInvitationSchema`, chama `invitation.service.createInvitation`. Retorna `{ id, token, inviteUrl: ${WEB_URL}/invite/${token}, expiresAt }`
   - `GET /invitations/:token` (público, sem auth): chama `validateToken`, retorna dados para pré-preencher onboarding pai. Rate limit: 20/min por IP
   - `GET /invitations` (PROFESSOR): lista convites do professor autenticado. Query param `?status` (PENDING/CLAIMED/EXPIRED). Inclui `student.name` e `student.subject.name` aninhados
   - **Não implementar** `POST /invitations/:token/accept` separado — o claim acontece durante `POST /auth/register` quando `inviteToken` presente no body. Em `auth.service.register`: se `inviteToken` fornecido → chama `invitation.service.claimInvitation(token, userId, registerInput.email)` passando o email do cadastro — a verificação de correspondência ocorre dentro de `claimInvitation` **[FIX I07]**
