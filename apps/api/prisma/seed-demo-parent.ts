@@ -1,7 +1,7 @@
 /**
  * Demo fixture — pai vinculado a Aluno 1 do professor1@test.com.
  * Cria (ou reaproveita) um pai com:
- *   - email: pai-demo@liveaula.com / senha Demo@1234
+ *   - email: pai-demo@example.com / senha SEED_PARENT_PASSWORD (default Demo@1234 fora de produção)
  *   - LGPD_PARENTAL_ART14 consent
  *   - StudentParent vínculo a Aluno 1
  *   - Assinatura ACTIVE (sem paywall na demo)
@@ -14,11 +14,12 @@
  */
 import { PrismaClient, Role, SubscriptionStatus, LessonEmotion } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { seedPassword } from '../src/lib/seed-password';
 
 const prisma = new PrismaClient();
 
-const PARENT_EMAIL = 'pai-demo@liveaula.com';
-const PARENT_PASSWORD = 'Demo@1234';
+const PARENT_EMAIL = 'pai-demo@example.com';
+const PARENT_PASSWORD = seedPassword('SEED_PARENT_PASSWORD', 'Demo@1234');
 const PARENT_NAME = 'Maria Demo';
 const PROFESSOR_EMAIL = 'professor1@test.com';
 const STUDENT_NAME = 'Aluno 1';
@@ -183,7 +184,7 @@ async function main() {
 
   console.log('\n✅ Demo parent pronta!');
   console.log(`   Login pai: ${PARENT_EMAIL} / ${PARENT_PASSWORD}`);
-  console.log(`   Login professor: ${PROFESSOR_EMAIL} / Test@1234`);
+  console.log(`   Login professor: ${PROFESSOR_EMAIL} / SEED_PROFESSOR_PASSWORD`);
 }
 
 main()
