@@ -59,7 +59,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @liveaula/web build
         env:
-          NEXT_PUBLIC_API_URL: https://api.liveaula.com
+          NEXT_PUBLIC_API_URL: http://localhost:3000
           JWT_SECRET: ci-placeholder-secret-for-build
 
   mobile-typecheck:

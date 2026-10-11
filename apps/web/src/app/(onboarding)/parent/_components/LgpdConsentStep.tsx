@@ -2,6 +2,9 @@
 import { useRef, useState, useCallback } from 'react';
 import { apiFetch } from '@/lib/api';
 
+// Same contact as apps/mobile/app/(onboarding)/parent/step-3.tsx
+const DPO_EMAIL = process.env.NEXT_PUBLIC_DPO_EMAIL || 'privacidade@example.com';
+
 const LGPD_TEXT = `TERMO DE CONSENTIMENTO PARENTAL — LGPD ART. 14
 
 Este Termo de Consentimento Parental é celebrado em conformidade com a Lei Geral de Proteção de Dados Pessoais (LGPD — Lei nº 13.709/2018), especialmente em seu Artigo 14, que trata do tratamento de dados pessoais de crianças e adolescentes.
@@ -24,13 +27,13 @@ Os dados são utilizados exclusivamente para:
 Os dados do menor são compartilhados apenas com o professor responsável pelas aulas. Não compartilhamos com terceiros para fins comerciais.
 
 4. DIREITOS DO TITULAR
-Você, como responsável legal, tem direito a: acessar, corrigir, deletar e solicitar portabilidade dos dados do menor a qualquer momento, através das configurações da plataforma ou pelo email privacidade@liveaula.com.
+Você, como responsável legal, tem direito a: acessar, corrigir, deletar e solicitar portabilidade dos dados do menor a qualquer momento, através das configurações da plataforma ou pelo email ${DPO_EMAIL}.
 
 5. REVOGAÇÃO
 Este consentimento pode ser revogado a qualquer momento. A revogação implica na impossibilidade de utilização do serviço de acompanhamento.
 
 6. CONTATO DPO
-Encarregado de Proteção de Dados: dpo@liveaula.com
+Encarregado de Proteção de Dados: ${DPO_EMAIL}
 
 Ao aceitar este termo, você declara ser responsável legal pelo menor e que as informações fornecidas são verdadeiras.`;
 

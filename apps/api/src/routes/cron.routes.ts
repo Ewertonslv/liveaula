@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
+import { seedPassword } from '../lib/seed-password';
 import { createBillingService } from '../services/billing.service';
 
 export async function cronRoutes(fastify: FastifyInstance) {
@@ -82,14 +83,22 @@ export async function cronRoutes(fastify: FastifyInstance) {
         return reply.status(401).send({ error: 'UNAUTHORIZED' });
       }
 
-      const adminHash = await bcrypt.hash('Admin@secure1', 12);
-      const profHash = await bcrypt.hash('Test@1234', 12);
+      let adminPassword: string;
+      let professorPassword: string;
+      try {
+        adminPassword = seedPassword('SEED_ADMIN_PASSWORD', 'Admin@secure1');
+        professorPassword = seedPassword('SEED_PROFESSOR_PASSWORD', 'Test@1234');
+      } catch (err: any) {
+        return reply.status(500).send({ error: 'SEED_PASSWORD_MISSING', message: err.message });
+      }
+      const adminHash = await bcrypt.hash(adminPassword, 12);
+      const profHash = await bcrypt.hash(professorPassword, 12);
 
       await fastify.prisma.user.upsert({
-        where: { email: 'admin@liveaula.com' },
+        where: { email: 'admin@example.com' },
         update: {},
         create: {
-          email: 'admin@liveaula.com',
+          email: 'admin@example.com',
           passwordHash: adminHash,
           role: 'ADMIN',
           name: 'Admin liveaula',
@@ -149,9 +158,8 @@ export async function cronRoutes(fastify: FastifyInstance) {
 
       return reply.send({
         success: true,
-        admin: 'admin@liveaula.com',
+        admin: 'admin@example.com',
         professor: 'professor1@test.com',
-        password: 'Test@1234',
         students: students.length,
       });
     },

@@ -21,7 +21,7 @@ export function createInvitationService(app: FastifyInstance) {
       // Return existing pending invitation if exists (and resend email)
       const existing = await repo.findExisting(studentId, parentEmail);
       if (existing) {
-        const inviteUrl = `${process.env.WEB_URL || 'https://liveaula.com'}/invite/${existing.token}`;
+        const inviteUrl = `${process.env.WEB_URL || 'http://localhost:3001'}/invite/${existing.token}`;
         emailService.sendInvitation({
           to: parentEmail,
           professorName: professor?.name ?? 'Professor',
@@ -37,7 +37,7 @@ export function createInvitationService(app: FastifyInstance) {
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
       const invitation = await repo.create({ professorId, studentId, parentEmail, token, expiresAt });
-      const inviteUrl = `${process.env.WEB_URL || 'https://liveaula.com'}/invite/${invitation.token}`;
+      const inviteUrl = `${process.env.WEB_URL || 'http://localhost:3001'}/invite/${invitation.token}`;
 
       emailService.sendInvitation({
         to: parentEmail,

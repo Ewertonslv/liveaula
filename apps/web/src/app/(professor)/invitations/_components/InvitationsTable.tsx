@@ -30,7 +30,7 @@ export default function InvitationsTable({ invitations }: InvitationsTableProps)
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   async function handleCopy(invitation: Invitation) {
-    const link = `https://liveaula.com/invite/${invitation.token}`;
+    const link = `${window.location.origin}/invite/${invitation.token}`;
     try {
       await navigator.clipboard.writeText(link);
       setCopiedId(invitation.id);

@@ -1,5 +1,6 @@
 import { PrismaClient, Role } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { seedPassword } from '../src/lib/seed-password';
 
 const prisma = new PrismaClient();
 
@@ -17,14 +18,14 @@ async function main() {
     )
   );
 
-  const adminHash = await bcrypt.hash('Admin@secure1', 12);
+  const adminHash = await bcrypt.hash(seedPassword('SEED_ADMIN_PASSWORD', 'Admin@secure1'), 12);
   await prisma.user.upsert({
-    where: { email: 'admin@liveaula.com' },
+    where: { email: 'admin@example.com' },
     update: {},
-    create: { email: 'admin@liveaula.com', passwordHash: adminHash, role: Role.ADMIN, name: 'Admin liveaula' },
+    create: { email: 'admin@example.com', passwordHash: adminHash, role: Role.ADMIN, name: 'Admin liveaula' },
   });
 
-  const profHash = await bcrypt.hash('Test@1234', 12);
+  const profHash = await bcrypt.hash(seedPassword('SEED_PROFESSOR_PASSWORD', 'Test@1234'), 12);
   const professors = await Promise.all(
     Array.from({ length: 5 }, (_, i) =>
       prisma.user.upsert({

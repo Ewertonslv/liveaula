@@ -94,7 +94,7 @@ export function createAuthService(app: FastifyInstance) {
       prisma.emailVerificationToken.create({
         data: { userId: user.id, token: verifyToken, expiresAt },
       }).then(() => {
-        const verifyUrl = `${process.env.WEB_URL || 'https://liveaula.com'}/verify-email?token=${verifyToken}`;
+        const verifyUrl = `${process.env.WEB_URL || 'http://localhost:3001'}/verify-email?token=${verifyToken}`;
         // DEV-ONLY: log link so demos work without verified Resend domain
         if (process.env.NODE_ENV !== 'production') {
           app.log.info({ email: data.email, verifyUrl }, `[dev] verify link for ${data.email}: ${verifyUrl}`);
@@ -166,7 +166,7 @@ export function createAuthService(app: FastifyInstance) {
         data: { userId: user.id, token, expiresAt },
       });
 
-      const resetUrl = `${process.env.WEB_URL || 'https://liveaula.com'}/reset-password?token=${token}`;
+      const resetUrl = `${process.env.WEB_URL || 'http://localhost:3001'}/reset-password?token=${token}`;
 
       // DEV-ONLY: always log the URL so demos work even when Resend rejects the recipient
       // (free Resend tier without verified domain only delivers to the account owner's email).

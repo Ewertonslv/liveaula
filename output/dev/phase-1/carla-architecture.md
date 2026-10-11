@@ -824,7 +824,7 @@ apps/api/prisma/migrations/
 apps/api/prisma/
   seed.ts                   ← 20 subjects (Matemática, Português, Física...),
                                5 professores teste, 10 alunos, 20 aulas dummy,
-                               1 admin@liveaula.com
+                               1 admin@example.com
 ```
 
 **Ordem das migrations é rígida** (dependências de FK). Não mesclar migrations — cada entidade lógica separada para facilitar rollback.
